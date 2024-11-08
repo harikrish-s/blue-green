@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8081:80"
+      - "80"
     environment:
       - ENVIRONMENT=blue
       - DEPLOYMENT_TIME=${DEPLOY_TIME}
@@ -16,7 +16,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8082:80"
+      - "80"
     environment:
       - ENVIRONMENT=green
       - DEPLOYMENT_TIME=${DEPLOY_TIME}
