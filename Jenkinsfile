@@ -22,27 +22,32 @@ pipeline {
                 script {
                     sh "docker-compose down"
                     sh "docker network create deploy-net || true"
-                    sh "docker-compose up -d --build ${env.TARGET_ENV}"
+                    sh "docker-compose up -d --build ${env.TARGET_ENV} nginx"
                     sleep 5
                 }
             }
         }
 
-        stage('Switch Traffic') {
-steps {
+stage('Switch Traffic') {
+    steps {
         script {
+            echo "hello"
+            // Check if nginx container exists and is running
             def nginxStatus = sh(script: "docker-compose ps -q nginx", returnStatus: true)
             if (nginxStatus != 0) {
                 error "Nginx container is not running!"
             }
 
+            // Update nginx config and restart
             sh """
                 sed -i 's|proxy_pass http://${env.CURRENT_ENV}|proxy_pass http://${env.TARGET_ENV}|g' nginx.conf
-                docker-compose exec -T nginx nginx -s reload
+                cat nginx.conf  # Verify config change
+                docker-compose up -d nginx
             """
             echo "Traffic switched to ${env.TARGET_ENV}"
         }
     }
-        }
+}
+
     }
 }
