@@ -29,15 +29,20 @@ pipeline {
         }
 
         stage('Switch Traffic') {
-            steps {
-                script {
-                    sh """
-                        sed -i 's|proxy_pass http://$env.CURRENT_ENV|proxy_pass http://$env.TARGET_ENV|g' nginx.conf
-                        docker-compose exec -T nginx nginx -s reload
-                    """
-                    echo "Traffic switched to ${env.TARGET_ENV}"
-                }
+steps {
+        script {
+            def nginxStatus = sh(script: "docker-compose ps -q nginx", returnStatus: true)
+            if (nginxStatus != 0) {
+                error "Nginx container is not running!"
             }
+
+            sh """
+                sed -i 's|proxy_pass http://${env.CURRENT_ENV}|proxy_pass http://${env.TARGET_ENV}|g' nginx.conf
+                docker-compose exec -T nginx nginx -s reload
+            """
+            echo "Traffic switched to ${env.TARGET_ENV}"
+        }
+    }
         }
     }
 }
