@@ -22,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Deploy to target environment
-                    sh "docker-compose up -d --build ${env.TARGET_ENV}"
+                    sh "docker-compose up -d --force-recreate --build ${env.TARGET_ENV}"
                     // Wait a few seconds for container to start
                     sleep 5
                 }
