@@ -8,7 +8,9 @@ services:
     environment:
       - ENVIRONMENT=blue
       - DEPLOYMENT_TIME=${DEPLOY_TIME}
-
+    networks:
+      - deploy-net
+      
   green:
     build:
       context: .
@@ -18,6 +20,9 @@ services:
     environment:
       - ENVIRONMENT=green
       - DEPLOYMENT_TIME=${DEPLOY_TIME}
+    networks:
+      - deploy-net
+
 
   nginx:
     image: nginx:alpine
@@ -28,3 +33,9 @@ services:
     depends_on:
       - blue
       - green
+    networks:
+      - deploy-net
+
+networks:
+  deploy-net:
+    driver: bridge
