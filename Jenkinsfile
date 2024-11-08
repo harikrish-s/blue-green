@@ -23,6 +23,10 @@ pipeline {
                 script {
                     // Deploy to target environment
                     sh "docker-compose down"
+                    
+                    // Ensure network exists
+                    sh "docker network create deploy-net || true"
+                    
                     sh "docker-compose up -d --build ${env.TARGET_ENV}"
                     // Wait a few seconds for container to start
                     sleep 5
