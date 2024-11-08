@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Health Check Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            margin: 20px auto;
+            max-width: 200px;
+        }
+        .details {
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="status">
+        <h1>OK</h1>
+    </div>
+    <div class="details">
+        <p>Environment: <span id="env"></span></p>
+        <p>Last Check: <span id="timestamp"></span></p>
+    </div>
+    <script>
+        // Update timestamp
+        document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        
+        // Get environment from URL parameter or default to 'unknown'
+        const urlParams = new URLSearchParams(window.location.search);
+        document.getElementById('env').textContent = urlParams.get('env') || 'unknown';
+    </script>
+</body>
+</html>
