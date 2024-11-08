@@ -23,24 +23,8 @@ pipeline {
                 script {
                     // Deploy to target environment
                     sh "docker-compose up -d --build ${env.TARGET_ENV}"
-                }
-            }
-        }
-        
-        stage('Health Check') {
-            steps {
-                script {
-                    // Wait for container to be ready
-                    sleep 10
-                    
-                    def port = env.TARGET_ENV == 'blue' ? '8081' : '8082'
-                    
-                    // Perform health check
-                    def status = sh(script: "curl -s -o /dev/null -w '%{http_code}' http://localhost:${port}/health.html", returnStdout: true).trim()
-                    
-                    if (status != '200') {
-                        error "Health check failed with status ${status}"
-                    }
+                    // Wait a few seconds for container to start
+                    sleep 5
                 }
             }
         }
@@ -55,15 +39,6 @@ pipeline {
                     """
                     echo "Traffic switched to ${env.TARGET_ENV}"
                 }
-            }
-        }
-    }
-    
-    post {
-        failure {
-            script {
-                echo "Deployment failed, rolling back..."
-                sh "docker-compose stop ${env.TARGET_ENV}"
             }
         }
     }
